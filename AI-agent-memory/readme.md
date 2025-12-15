@@ -46,12 +46,13 @@ Proyek ini menunjukkan pemahaman saya yang kuat dalam:
 ## 🖼️ Visualisasi Alur Kerja
 
 #### Simple AI Agent
-![Visualisasi Flow AI Agent with Memory](https://github.com/ookapratama/n8n-automation-projects/blob/main/AI-agent-memory/screenshots/simple-ai-agent.png)
-![Visualisasi Flow AI Agent with Memory](https://github.com/ookapratama/n8n-automation-projects/blob/main/AI-agent-memory/screenshots/result/simple-ai-agent.png)
+![Visualisasi Flow AI Agent with Memory](https://github.com/ookapratama/n8n-automation-projects/blob/main/AI-agent-memory/screenshot/simple-ai-agent.png)
+
+![Visualisasi Flow AI Agent with Memory](https://github.com/ookapratama/n8n-automation-projects/blob/main/AI-agent-memory/screenshot/result/simple-ai-agent.png)
 
 #### Prompt Engineering
-![Visualisasi Prompt Engineering with User message and System Message](https://github.com/ookapratama/n8n-automation-projects/blob/main/AI-agent-memory/screenshots/prompt-engineering.png)
-![Visualisasi Prompt Engineering with User message and System Message](https://github.com/ookapratama/n8n-automation-projects/blob/main/AI-agent-memory/screenshots/result/prompt-engineering.png)
+![Visualisasi Prompt Engineering with User message and System Message](https://github.com/ookapratama/n8n-automation-projects/blob/main/AI-agent-memory/screenshot/prompt-engineering.png)
+![Visualisasi Prompt Engineering with User message and System Message](https://github.com/ookapratama/n8n-automation-projects/blob/main/AI-agent-memory/screenshot/result/prompt-engineering.png)
 
 
 ---
