@@ -1,0 +1,235 @@
+{
+  "name": "Prompt Engineering with User Message and System Message",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Keyword Extractor",
+        "formDescription": "Testing make form trigger",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "name",
+              "placeholder": "Type your name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "username",
+              "placeholder": "Type your username",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email",
+              "placeholder": "Type yor valid email"
+            },
+            {
+              "fieldLabel": "description",
+              "fieldType": "textarea",
+              "placeholder": "Describe about yourself",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        144,
+        0
+      ],
+      "id": "5138ae01-1a9b-4583-b191-0b90b3823aee",
+      "name": "On form submission",
+      "webhookId": "a7e175fe-0474-463d-9517-893392dfe952"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "424cc2d1-e892-4491-8d46-c7f96b5f15a2",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "d15ec469-1b2e-4cc5-8b5e-86f9997d3da2",
+              "name": "username",
+              "value": "={{ $json.username }}",
+              "type": "string"
+            },
+            {
+              "id": "657cd568-c5fb-442e-be74-b6f0b9487845",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "88d86f44-bbbd-4790-a857-8f8625325246",
+              "name": "Description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "faf37e02-732a-4bb9-86c5-abed48f02f53",
+              "name": "submittedAt",
+              "value": "={{ $json.submittedAt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        0
+      ],
+      "id": "12a12ef4-d070-43e2-b251-8f0858d44ce1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract keywords from this paragraph {{ $json.Description }}",
+        "options": {
+          "systemMessage": "## 🤖 System Message: Automated Keyword Extractor Agent\n\n### 1. Overview\n\nYou are an expert **Keyword Extraction Agent**. Your primary function is to analyze input text, identify the most critical and relevant technical terms, concepts, and names, and output them as a clean, structured list. The focus of the current task is strictly the domain of **Machine Learning (ML)** and **Deep Learning**.\n\n### 2. Context\n\nThe input text will be a snippet, paragraph, or short article related to algorithms, paradigms, model evaluation, or data processing within Machine Learning. Your output must serve as concise tags or index terms for content organization, retrieval, and indexing within a knowledge base.\n\n### 3. Instructions\n\n1.  **Strictly Technical:** Focus only on technical terminology, named algorithms, specific concepts, and recognized methodologies (e.g., *Convolutional Neural Networks*, *Regularization*, *Unsupervised Learning*).\n2.  **Exclusion:** Exclude all common English words (*stopwords*), conjunctions, prepositions, articles (a, an, the), and general non-technical verbs or nouns (e.g., *is, are, a, with, process, data* unless part of a technical phrase).\n3.  **Phrase Recognition:** Prioritize multi-word technical phrases as single keywords (e.g., \"Feature Engineering\", \"Principal Component Analysis\"), rather than breaking them down.\n4.  **Format:** Output the resulting keywords as a single, comma-separated list without numbering, bullet points, or introductory phrases.\n\n### 4. Examples\n\n| Input Text (User Input) | Required Output (Agent Response) |\n| :--- | :--- |\n| \"Supervised Learning models use labeled data for Classification. Common issues include Overfitting.\" | Supervised Learning, labeled data, Classification, Overfitting |\n| \"We utilized K-Means clustering in the preprocessing step to manage the dataset outliers.\" | K-Means clustering, preprocessing, dataset outliers |\n| \"The agent uses Reinforcement Learning to maximize its reward within the environment.\" | Reinforcement Learning, Agent, reward, environment |\n\n### 5. SOP (Standard Operating Procedure)\n\n1.  **Receive:** Accept the input text payload from the preceding n8n node.\n2.  **Analyze:** Scan the text for technical entities and core concepts related to Machine Learning.\n3.  **Filter:** Apply the exclusion rule (remove stopwords and non-technical words).\n4.  **Synthesize:** Group multi-word technical phrases.\n5.  **Format:** Compile the final list, ensuring it meets the comma-separated format requirement.\n6.  **Output:** Return the formatted list as the final response string.\n\n### 6. Final Notes\n\nThe success of the workflow depends on the cleanliness and relevance of your output. **Do not include any conversational filler, explanations, or introductory text.** Your response must be the comma-separated list only."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        528,
+        0
+      ],
+      "id": "af0b3eb0-a138-4a20-a9e3-e0845251054d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        208
+      ],
+      "id": "03fc332e-83d1-4163-9726-5d0222382ea3",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xuxCagCwAPzZyre4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5b557b36-744a-4781-ac97-9e0a56738f67",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        0
+      ],
+      "id": "57aeb14f-1979-4e0b-aed8-f5350b8bfcfe",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "name": "Ooka Pratama",
+          "username": "ookapratama",
+          "email": "ookapratama@gmail.com",
+          "description": "The field of Machine Learning is fundamentally built upon three core learning paradigms. The first is Supervised Learning, where models are trained using comprehensive labeled data sets. Tasks under this umbrella typically include Classification, where the goal is to predict a discrete category, and Regression, which aims to predict a continuous numerical value. Effective Supervised Learning heavily relies on the quality and accuracy of the initial input features provided to the model during the training phase.\r\n\r\nUnsupervised and Reinforcement Learning\r\n\"In contrast to the supervised approach, Unsupervised Learning deals exclusively with unlabeled data. Its primary objective is to discover inherent structure and hidden patterns within the data. A prime example of this technique is Clustering, often implemented using algorithms like K-Means to group similar data points together. The third major paradigm is Reinforcement Learning (RL), which involves an autonomous Agent learning optimal behavior by interacting with a dynamic Environment and maximizing cumulative Reward signals over time.",
+          "submittedAt": "2025-12-13T22:30:39.913+07:00",
+          "formMode": "test"
+        }
+      }
+    ],
+    "AI Agent": [
+      {
+        "json": {
+          "output": "Machine Learning, learning paradigms, Supervised Learning, labeled data sets, Classification, Regression, continuous numerical value, input features, training phase, Unsupervised Learning, unlabeled data, inherent structure, hidden patterns, Clustering, K-Means, Reinforcement Learning, RL, autonomous Agent, dynamic Environment, cumulative Reward signals"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ea3d2bfc-ae9b-4b4c-ac71-52bafa5a529e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aa6df570f4be8b3138b237ce6dc648e371b8656be766cb3f7f8dc624e0122dac"
+  },
+  "id": "jc9ikr0o5e3wj6pS",
+  "tags": []
+}
