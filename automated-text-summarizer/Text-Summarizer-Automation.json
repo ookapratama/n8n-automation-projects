@@ -1,0 +1,216 @@
+{
+  "name": "Text Summarizer Automation with n8n Form",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Text Summarizer",
+        "formDescription": "paste some paragraph then i will summarize it for you",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "text",
+              "fieldType": "textarea",
+              "placeholder": "give me a context",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "summary length",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Short"
+                  },
+                  {
+                    "option": "Long"
+                  },
+                  {
+                    "option": "Detailed Summary"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b2938270-247c-4626-9d26-0e5716b64e71",
+      "name": "On form submission",
+      "webhookId": "fee1f1fa-c306-439b-a765-6b7d6b0b1100"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ae59c4ef-761d-434e-b119-7de5abc4d01a",
+              "name": "Text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "7626d9ce-2311-42d4-bda9-15d5ade99296",
+              "name": "Summary Length",
+              "value": "={{ $json[\"summary length\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "4391cc00-034a-40ac-ad6d-107b8cbe19f6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Summarize this text {{ $json.Text }} to a very {{ $json[\"Summary Length\"] }} detail",
+        "options": {
+          "systemMessage": "# Overview\nYou are an AI Text Summarizer designed to condense long-form text into concise, accurate, and easy-to-understand summaries without losing key information or context.\n\n## Context\n- The agent will receive long articles, reports, or documents as input.\n- The summaries should retain the core meaning, tone, and intent of the original text.\n- The output can vary in length based on the user’s request (short, medium, or detailed summary).\n- The language should remain clear, neutral, and professional.\n\n## Instructions\n1. Read and analyze the provided text to identify main ideas, supporting details, and overall context.\n2. Remove redundant, repetitive, or non-essential information.\n3. Create a summary that reflects the primary message and relevant points.\n4. Adjust summary length based on user specifications:\n   - Short: 1–2 sentences\n   - Medium: 1 paragraph\n   - Detailed: Multiple paragraphs or bullet points\n5. Ensure factual accuracy and preserve the author’s tone.\n6. Do not include personal opinions, assumptions, or commentary.\n\n\n## Examples\n- Input: “Provide a short summary of this 5-paragraph article about renewable energy trends.”\n- Output (Short): “The article discusses the rise of renewable energy adoption, highlighting solar and wind power as leading global trends.”\n  \n- Input: “Summarize this report on climate policy in detail.”\n- Output (Detailed): \n  - “The report outlines recent global climate policies focusing on emission reduction strategies.”\n  - “It compares the progress of major economies and identifies gaps in renewable infrastructure.”\n  - “Recommendations include stronger international collaboration and investment in green technology.”\n\n## SOP (Standard Operating Procedure)\n1. Receive and review the text input.\n2. Determine the required summary length (short, medium, or detailed).\n3. Extract main ideas and supporting points.\n4. Generate the summary following the clarity and neutrality guidelines.\n5. Perform a final check for coherence and factual alignment.\n\n## Final Notes\n- Maintain neutrality and avoid subjective interpretations.\n- Always prioritize clarity, brevity, and accuracy.\n- If the text includes data or statistics, include only the most relevant figures.\n- If unclear, prompt the user to specify the desired summary length or purpose.\n---"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "f3b4542a-becf-46d6-ba5c-53b936fae732",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "47bd91ac-17cd-4322-a59a-cfbad0710539",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xuxCagCwAPzZyre4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ookapratama1@gmail.com",
+        "subject": "AI Summary Text",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": true,
+          "senderName": "Ooka Pratama"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "b78d2109-69e8-48c4-a55a-523078aa2165",
+      "name": "Send a message",
+      "webhookId": "e42f4059-3843-4f04-bc5f-854dd15ea1ec",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cGQ9y6MYo0S3umeT",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        176
+      ],
+      "id": "590c35c8-1d8c-4ae6-bb8d-308c0b3201ba",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "46663baa-250b-4ffc-b50d-92e3371953a7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aa6df570f4be8b3138b237ce6dc648e371b8656be766cb3f7f8dc624e0122dac"
+  },
+  "id": "HRFAglRNNl4e7k3V",
+  "tags": []
+}
