@@ -1,0 +1,11 @@
+Generate a complete "System Message" prompt for an AI Agent Automation Workflow based on the following topic: "Enter Project Name Here"
+
+Use the base structure with the following sections in Markdown format:
+- Overview  
+- Context  
+- Instructions  
+- Examples  
+- SOP (Standard Operating Procedure)  
+- Final Notes  
+
+The result should be cleanly formatted and ready for direct use as a “System Message” in an automation platform in n8n.
