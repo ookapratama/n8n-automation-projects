@@ -1,0 +1,581 @@
+{
+  "name": "AI Post Description Automation with Google Sheet",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5ca0549e-cdfe-48f3-b216-5b3fe72ea3e0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE",
+          "mode": "list",
+          "cachedResultName": "Belajar n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1337856329,
+          "mode": "list",
+          "cachedResultName": "AI Description",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE/edit#gid=1337856329"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f8a9330d-f934-4057-8501-4e0e956cb835",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2TjedGGyFbSGG1s9",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Topic }}",
+        "options": {
+          "systemMessage": "# Overview\nYou are an AI agent designed to generate high-quality post descriptions for any topic provided via a Google Sheet. The agent retrieves a list of topics, produces clear, engaging, and SEO-friendly descriptions, and writes the results back to the same sheet in the designated column.\n\n## Context\n- The Google Sheet contains a list of topics that require descriptive summaries.  \n- Each topic represents a subject, idea, keyword, or theme for which a description will be generated.  \n- The descriptions will be used for social media posts, blog intros, or content previews.  \n- The generated description should be original, relevant, and concise.  \n\n## Instructions\n1. Retrieve the next available topic from the Google Sheet.  \n2. Analyze the topic to understand its context and audience potential.  \n3. Generate a compelling description of 50–100 words that:  \n   - Clearly explains what the topic is about.  \n   - Captures interest and encourages further reading.  \n   - Includes relevant keywords naturally for SEO optimization.  \n4. Write the generated description back to the corresponding row in the Google Sheet under the “Description” column.  \n5. Mark the topic as “Completed” once the description is added.  \n6. Repeat the process for all remaining topics.  \n \n\n## Examples\n- Input Topic: “Benefits of Remote Work”  \n  Output Description: “Remote work offers flexibility, boosts productivity, and enhances work-life balance. Learn how companies and employees are adapting to this evolving workplace trend that prioritizes autonomy and digital collaboration.”  \n\n- Input Topic: “Artificial Intelligence in Healthcare”  \n  Output Description: “AI is revolutionizing healthcare by improving diagnostics, patient care, and treatment efficiency. Discover how machine learning is shaping the future of medical innovation and patient outcomes.”  \n\n## SOP (Standard Operating Procedure)\n1. Connect to the Google Sheet and identify unprocessed topics.  \n2. For each topic:  \n   - Generate a 50–100 word description following the outlined tone and style.  \n   - Ensure the description is unique, relevant, and grammatically correct.  \n   - Update the “Description” column with the result.  \n   - Mark the status as “Completed.”  \n3. Handle any API errors gracefully and log failed rows for retry.  \n\n## Final Notes\n- Descriptions should be clear, engaging, and factual.  \n- Avoid repetition and keyword stuffing.  \n- Ensure all descriptions are suitable for public use.  \n- Maintain consistent formatting across all entries.  \n---\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "bf655869-5933-4291-a0ad-7f4ceafab227",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "7aa62e37-26e1-45be-aaf2-12f80e71d53f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xuxCagCwAPzZyre4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE",
+          "mode": "list",
+          "cachedResultName": "Belajar n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1337856329,
+          "mode": "list",
+          "cachedResultName": "AI Description",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE/edit#gid=1337856329"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Description": "={{ $json.output }}",
+            "Topic": "={{ $('Get row(s) in sheet').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        -32
+      ],
+      "id": "ac88ad9b-7127-4625-835a-80b7b2ad640c",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2TjedGGyFbSGG1s9",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Post Description Automation",
+        "formDescription": "Get detailed description for any Topic",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Topic",
+              "fieldType": "textarea",
+              "placeholder": "Enter your topic",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Length",
+              "fieldType": "number",
+              "placeholder": "500",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Email",
+              "placeholder": "Inser your email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        400
+      ],
+      "id": "e4d103db-c2e9-40aa-9ec7-3f2e68e2df9d",
+      "name": "On form submission",
+      "webhookId": "489b9fe3-cbdf-47cd-a7db-8069d892eff7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e37224a9-2b69-4eda-892c-da4c33cf490b",
+              "name": "Topic",
+              "value": "={{ $json.Topic }}",
+              "type": "string"
+            },
+            {
+              "id": "3b9b935c-a09b-4cff-9871-187fac22c754",
+              "name": "Length",
+              "value": "={{ $json.Length }}",
+              "type": "number"
+            },
+            {
+              "id": "7af83f03-0014-47e3-a346-60cea8446d04",
+              "name": "Your Email",
+              "value": "={{ $json[\"Your Email\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        400
+      ],
+      "id": "f8d120de-0874-48b8-b173-33c7215d2d9c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=write a detailed description of {{ $json.Topic }} of just only {{ $json.Length }} words",
+        "options": {
+          "systemMessage": "# Overview\nYou are an AI agent responsible for generating descriptive summaries for any topic submitted through a web form. Upon receiving a topic, the agent creates a clear, engaging, and SEO-friendly description, then sends the generated result back to the user via email.\n\n## Context\n- Users submit topics through a web form (e.g., “Climate Change Solutions,” “Digital Marketing Trends,” etc.).  \n- The agent must interpret the topic, craft an accurate and appealing description, and deliver it by email.  \n- The description will be used for blogs, social media captions, newsletters, or general content introductions.  \n\n## Instructions\n1. Receive the topic input from the web form.  \n2. Analyze the topic to identify key ideas, audience relevance, and context.  \n3. Generate a well-written description of 50–100 words that:  \n   - Explains the topic clearly and concisely.  \n   - Uses an informative yet engaging tone.  \n   - Includes natural SEO-friendly keywords.  \n4. Format the output neatly (plain text or HTML, depending on email system requirements).  \n5. Send the description back to the user’s provided email address with a subject line such as “Your AI-Generated Topic Description.”  \n6. Log the request and response for record-keeping or analytics.  \n \n\n## Examples\n- Input Topic: “Sustainable Energy Innovations”  \n  Output Description (email body):  \n  “Sustainable energy innovations are transforming the global energy landscape. From solar advancements to wind power integration, these technologies are driving cleaner, more efficient energy production for a greener future.”  \n\n- Input Topic: “AI in Customer Service”  \n  Output Description (email body):  \n  “Artificial Intelligence is reshaping customer service by offering instant, personalized assistance. Learn how AI chatbots and automation tools are improving response times and enhancing user satisfaction across industries.”  \n\n## SOP (Standard Operating Procedure)\n1. Listen for incoming web form submissions.  \n2. Extract the topic and user’s email address.  \n3. Generate a 50–100 word description following the guidelines above.  \n4. Validate the email address format before sending.  \n5. Deliver the generated description via email with a clear subject and greeting.  \n6. Log the transaction with timestamp, topic, and email status (success/failure).  \n7. Handle errors (invalid emails, failed sends) with a retry or alert system.  \n\n## Final Notes\n- Descriptions must be original, accurate, and suitable for public distribution.  \n- Maintain a consistent tone and avoid repetition.  \n- Ensure compliance with data privacy and anti-spam regulations when handling email addresses.  \n- Keep messages short, professional, and engaging.  \n---\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        416,
+        400
+      ],
+      "id": "cf8af412-2c76-4a74-88a9-4c539927adb8",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        272,
+        608
+      ],
+      "id": "f89b9e11-34ec-444d-9cba-b5d6d62bff16",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xuxCagCwAPzZyre4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE",
+          "mode": "list",
+          "cachedResultName": "Belajar n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1337856329,
+          "mode": "list",
+          "cachedResultName": "AI Description",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE/edit#gid=1337856329"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Topic": "={{ $('Edit Fields').item.json.Topic }}",
+            "Description": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        400
+      ],
+      "id": "0ba678a6-e69d-4464-a2c6-22a5ff721725",
+      "name": "Insert or Update with Form",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2TjedGGyFbSGG1s9",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE",
+          "mode": "list",
+          "cachedResultName": "Belajar n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1337856329,
+          "mode": "list",
+          "cachedResultName": "AI Description",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bDtTarWI1IGaTbClbe4PoVWXxz9spwQzCD5WuRT-wqE/edit#gid=1337856329"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Topic": "={{ $('Get row(s) in sheet').item.json.Topic }}",
+            "Description": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        160
+      ],
+      "id": "7666a5cd-13fc-4557-9de7-2f5443b7df44",
+      "name": "Inser or update with Schedule Trigger",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2TjedGGyFbSGG1s9",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json[\"Your Email\"] }}",
+        "subject": "=Today Topic Description : {{ $json.Topic }}",
+        "emailType": "text",
+        "message": "={{ $json.Description }}",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        976,
+        400
+      ],
+      "id": "d8584ad0-d51d-4d87-8b69-09239384fbeb",
+      "name": "Send a message",
+      "webhookId": "9f3f34b0-044d-4631-a65d-0a38241aee3d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cGQ9y6MYo0S3umeT",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Topic": "Tentang bahasa pemrograman python dalam bidang AI",
+          "Length": 200,
+          "Your Email": "ookapratama1@gmail.com",
+          "submittedAt": "2026-01-11T19:11:17.415+07:00",
+          "formMode": "test"
+        }
+      }
+    ],
+    "Edit Fields": [
+      {
+        "json": {
+          "Topic": "Tentang bahasa pemrograman python dalam bidang AI",
+          "Length": 200,
+          "Your Email": "ookapratama1@gmail.com"
+        }
+      }
+    ],
+    "AI Agent1": [
+      {
+        "json": {
+          "output": "Python telah memantapkan dirinya sebagai bahasa pemrograman utama dalam pengembangan Kecerdasan Buatan (AI) berkat kombinasi unik dari kesederhanaan, fleksibilitas, dan ekosistem perpustakaan yang sangat kaya. Sintaksisnya yang intuitif dan mudah dibaca memungkinkan para ilmuwan data dan insinyur AI untuk dengan cepat menulis kode, menguji ide, dan berfokus pada inti algoritma kompleks, tanpa terhambat oleh kerumitan bahasa.\n\nDi ranah Machine Learning (ML), Python mendominasi dengan pustaka seperti Scikit-learn, yang menyediakan implementasi efisien untuk berbagai algoritma pembelajaran, termasuk klasifikasi, regresi, pengelompokan, dan pemrosesan data. Untuk Deep Learning, framework terkemuka seperti TensorFlow, Keras, dan PyTorch, semuanya dengan API Python yang matang, telah menjadi standar industri. Ini memungkinkan pengembang membangun, melatih, dan menyebarkan jaringan saraf tiruan canggih untuk aplikasi seperti pengenalan gambar, pemrosesan bahasa alami (NLP), dan visi komputer.\n\nPustaka numerik seperti NumPy dan alat analisis data seperti Pandas juga esensial untuk manipulasi dan analisis dataset besar yang menjadi tulang punggung model AI yang efektif. Dengan dukungan komunitas global yang aktif, Python terus berkembang, menawarkan solusi canggih untuk setiap fase pengembangan AI, dari prototipe cepat hingga produksi skala besar. Sumber daya belajar melimpah dan integrasi mulus dengan alat pengembangan lainnya semakin mengukuhkan posisinya, mempercepat inovasi dan aplikasi AI di berbagai sektor, mempermudah aksesibilitasnya."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Inser or update with Schedule Trigger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Insert or Update with Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or Update with Form": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c3673483-fc5e-4456-8ef2-d44c561d1e2c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aa6df570f4be8b3138b237ce6dc648e371b8656be766cb3f7f8dc624e0122dac"
+  },
+  "id": "K9Ki1qEKnhrlMDKg",
+  "tags": []
+}
